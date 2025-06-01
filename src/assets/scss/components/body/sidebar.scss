@@ -1,0 +1,6 @@
+@use '../../variables/variables' as *;
+.wrapper-sidebar{
+  max-width: 260px;
+  width: 100%;
+  background-color: $theme-dark-background;
+}

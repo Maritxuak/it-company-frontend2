@@ -1,5 +1,7 @@
 <template>
   <div class="offcanvas-overlay"></div>
+  <sidebar v-if="actualUser" :firstName = "this.actualUser.firstName" :lastName = "this.actualUser.lastName" :role = "this.actualUser.role"/>
+  <headerBody />
   <router-view></router-view>
   <footer class="footer">
     AreaWD © 2025

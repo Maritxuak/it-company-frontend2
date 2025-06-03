@@ -5,4 +5,9 @@ export default {
     getProfile() {
         return http.get('/user-profile/me');
     },
+
+    //TODO Получение всех пользователей.
+    getProfileAll() {
+        return http.get('/user-profile/all');
+    },
 }

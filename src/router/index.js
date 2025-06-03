@@ -1,11 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Body from "@/components/globalComponents/Body/Body.vue";
-import indexLending from "@/pages/lending/index.vue"
 import login from "@/pages/auth/login/login.vue";
 import register from "@/pages/auth/register/register.vue";
 import profile from "@/pages/profile/index.vue";
 import reset from "@/pages/auth/reset/reset.vue"
-import createNotifications from "@/pages/administrations/notifications/createNotifications.vue"
+import createProject from "@/pages/project/create.vue"
+import list from "@/pages/project/list.vue";
+import listNotification from "@/pages/notifications/list.vue"
+import createNotification from "@/pages/notifications/create.vue"
+import taskList from "@/pages/task/list.vue"
+import createTask from "@/pages/task/create.vue"
+import chat from "@/pages/chat/index.vue"
 const routes = [
   {
     path: '/',
@@ -20,12 +25,75 @@ const routes = [
         },
       },
       {
-        path: 'createNotifications',
-        name: 'createNotifications',
-        component: createNotifications,
+        path: 'chat',
+        name: 'chat',
+        component: chat,
         meta: {
-          title: "Отправка уведомления",
+          title: "Чаты",
         },
+      },
+      {
+        path: '/project',
+        children: [
+          {
+            path: 'list',
+            name: 'projectList',
+            component: list,
+            meta: {
+              title: "Список проектов",
+            },
+          },
+          {
+            path: 'create',
+            name: 'createProject',
+            component: createProject,
+            meta: {
+              title: "Создание проекта",
+            },
+          },
+        ]
+      },
+      {
+        path: '/task',
+        children: [
+          {
+            path: 'list',
+            name: 'taskList',
+            component: taskList,
+            meta: {
+              title: "Список задач",
+            },
+          },
+          {
+            path: 'add',
+            name: 'addTask',
+            component: createTask,
+            meta: {
+              title: "Создание задач",
+            },
+          },
+        ]
+      },
+      {
+        path: '/notification',
+        children: [
+          {
+            path: 'list',
+            name: 'notificationList',
+            component: listNotification,
+            meta: {
+              title: "Список уведомлений",
+            },
+          },
+          {
+            path: 'create',
+            name: 'createNotification',
+            component: createNotification,
+            meta: {
+              title: "Создание уведомлений",
+            },
+          },
+        ]
       },
     ]
   },

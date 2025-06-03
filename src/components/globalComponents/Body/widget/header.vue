@@ -1,189 +1,194 @@
 <template>
   <header class="header white-bg fixed-top d-flex align-content-center flex-wrap">
+    <div class="has-sidebar-left" style="width: 100%">
+      <div class="pos-f-t">
 
-    <div class="logo">
-      <a href="../../../index.html" class="default-logo"><img src="../../../../assets/img/header/logo/logo.png" alt=""></a>
-      <a href="../../../index.html" class="mobile-logo"><img src="../../../../assets/img/header/logo/mobile-logo.png" alt=""></a>
-    </div>
-    <div class="main-header">
-      <div class="container-fluid">
-        <div class="row justify-content-between">
-          <div class="col-3 col-lg-1 col-xl-4">
-            <div class="main-header-left h-100 d-flex align-items-center">
-              <div class="main-header-user">
-                <a href="#" class="d-flex align-items-center" data-toggle="dropdown">
-                  <div class="menu-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-
-                  <div class="user-profile d-xl-flex align-items-center d-none">
-                    <div class="user-avatar">
-                      <img src="../../../../assets/img/header/avatar/user.png" alt="">
-                    </div>
-                    <div class="user-info" v-if="fio">
-                      <h4 class="user-name">{{fio}}</h4>
-                      <p class="user-email">{{email}}</p>
-                    </div>
-                  </div>
-                </a>
-                <div class="dropdown-menu">
-                  <a href="#">My Profile</a>
-                  <a href="#">task</a>
-                  <a href="#">Settings</a>
-                  <a href="#">Log Out</a>
-                </div>
-              </div>
-              <div class="main-header-pin d-block d-lg-none">
-                <div class="header-toogle-menu">
-                  <img src="../../../../assets/img/header/menu/menu.png" alt="">
-                </div>
-              </div>
-            </div>
+      </div>
+      <div class="sticky">
+        <div class="navbar navbar-expand navbar-dark d-flex justify-content-between bd-navbar blue accent-3">
+          <div class="relative">
+            <a href="#" data-toggle="push-menu" class="paper-nav-toggle pp-nav-toggle">
+              <i></i>
+            </a>
           </div>
-          <div class="col-9 col-lg-11 col-xl-8">
-            <div class="main-header-right d-flex justify-content-end">
-              <ul class="nav">
-                <li class="ml-0 d-none d-lg-flex">
-                  <div class="main-header-print">
-                    <a href="#">
-                      <img src="../../../assets/img/svg/print-icon.svg" alt="">
-                    </a>
-                  </div>
-                </li>
-                <li class="d-none d-lg-flex">
-                  <div class="main-header-date-time text-right">
-                    <h3 class="time">
-                      <span id="hours"></span>
-                      <span id="point">:</span>
-                      <span id="min"></span>
-                    </h3>
-<!--                    <span class="date"><span id="date">Tue, 12 1 2019</span></span>-->
-                  </div>
-                </li>
-                <li class="d-none d-lg-flex">
-                  <div class="main-header-btn ml-md-1">
-                    <a href="#" class="btn">Посмотреть задачи</a>
-                  </div>
-                </li>
-                <li>
-                  <div class="main-header-message">
-                    <a href="#" class="header-icon" data-toggle="dropdown">
-                      <img src="../../../../assets/img/header/message/message-icon.svg" alt="" class="svg">
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                      <div class="dropdown-header d-flex align-items-center justify-content-between">
-                        <h5>3 Unread messages</h5>
-                        <a href="#" class="text-mute d-inline-block">Clear all</a>
-                      </div>
-                      <div class="dropdown-body">
-                        <a href="#" class="item-single d-flex media align-items-center">
-                          <div class="figure">
-                            <img src="../../../../assets/img/header/avatar/m1.png" alt="">
-                            <span class="avatar-status bg-teal"></span>
+          <!--Top Menu Start -->
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <!-- Messages-->
+              <li class="dropdown custom-dropdown messages-menu">
+                <a href="#" class="nav-link" data-toggle="dropdown">
+                  <i class="icon-message "></i>
+                  <span class="badge badge-success badge-mini rounded-circle">4</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li>
+                    <!-- inner menu: contains the actual data -->
+                    <ul class="menu pl-2 pr-2">
+                      <!-- start message -->
+                      <li>
+                        <a href="#">
+                          <div class="avatar float-left">
+                            <img src="../../../../assets/img/dummy/u4.png" alt="">
+                            <span class="avatar-badge busy"></span>
                           </div>
-                          <div class="content media-body">
-                            <div class="d-flex align-items-center mb-2">
-                              <h6 class="name">Sender Name</h6>
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
+                          <h4>
+                            Support Team
+                            <small><i class="icon icon-clock-o"></i> 5 mins</small>
+                          </h4>
+                          <p>Why not buy a new awesome theme?</p>
                         </a>
-                        <a href="#" class="item-single d-flex media align-items-center">
-                          <div class="figure">
-                            <img src="../../../../assets/img/header/avatar/m2.png" alt="">
-                            <span class="avatar-status bg-teal"></span>
+                      </li>
+                      <li>
+                        <a href="#">
+                          <div class="avatar float-left">
+                            <img src="../../../../assets/img/dummy/u1.png" alt="">
+                            <span class="avatar-badge online"></span>
                           </div>
-                          <div class="content media-body">
-                            <div class="d-flex align-items-center mb-2">
-                              <h6 class="name">Tonya Lee</h6>
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
+                          <h4>
+                            Support Team
+                            <small><i class="icon icon-clock-o"></i> 5 mins</small>
+                          </h4>
+                          <p>Why not buy a new awesome theme?</p>
                         </a>
-                        <a href="#" class="item-single d-flex media align-items-center">
-                          <div class="figure">
-                            <img src="../../../../assets/img/header/avatar/m3.png" alt="">
-                            <span class="avatar-status bg-teal"></span>
+                      </li>
+                      <li>
+                        <a href="#">
+                          <div class="avatar float-left">
+                            <img src="../../../../assets/img/dummy/u2.png" alt="">
+                            <span class="avatar-badge idle"></span>
                           </div>
-                          <div class="content media-body">
-                            <div class="d-flex align-items-center mb-2">
-                              <h6 class="name">Cathy Nichols</h6>
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
+                          <h4>
+                            Support Team
+                            <small><i class="icon icon-clock-o"></i> 5 mins</small>
+                          </h4>
+                          <p>Why not buy a new awesome theme?</p>
                         </a>
-                        <a href="#" class="item-single d-flex media align-items-center">
-                          <div class="figure">
-                            <img src="../../../../assets/img/header/avatar/m4.png" alt="">
-                            <span class="avatar-status bg-teal"></span>
+                      </li>
+                      <li>
+                        <a href="#">
+                          <div class="avatar float-left">
+                            <img src="../../../../assets/img/dummy/u3.png" alt="">
+                            <span class="avatar-badge busy"></span>
                           </div>
-                          <div class="content media-body">
-                            <div class="d-flex align-items-center mb-2">
-                              <h6 class="name">Hubert Griffith</h6>
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
+                          <h4>
+                            Support Team
+                            <small><i class="icon icon-clock-o"></i> 5 mins</small>
+                          </h4>
+                          <p>Why not buy a new awesome theme?</p>
                         </a>
-                      </div>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="footer s-12 p-2 text-center"><a href="#">See All Messages</a></li>
+                </ul>
+              </li>
+              <li class="dropdown custom-dropdown notifications-menu">
+                <a href="#" class=" nav-link" data-toggle="dropdown" aria-expanded="false">
+                  <i class="icon-notifications "></i>
+                  <span class="badge badge-danger badge-mini rounded-circle">4</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li class="header">У тебя 3 новых уведомления</li>
+                  <li>
+                    <ul class="menu">
+                      <li>
+                        <a href="#">
+                          <i class="icon icon-data_usage text-success"></i> Собрание 26.06.25 в 14:00
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#">
+                          <i class="icon icon-data_usage text-danger"></i>Задача просрчоена!
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#">
+                          <i class="icon icon-data_usage text-yellow"></i>Задача скоро будет просрчоена!
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="footer p-2 text-center"><a href="#">View all</a></li>
+                </ul>
+              </li>
+              <li>
+                <a class="nav-link " data-toggle="collapse" data-target="#navbarToggleExternalContent"
+                   aria-controls="navbarToggleExternalContent"
+                   aria-expanded="false" aria-label="Toggle navigation">
+                  <i class=" icon-search3 "></i>
+                </a>
+              </li>
+              <li>
+                <a class="nav-link ml-2" data-toggle="control-sidebar">
+                  <i class="icon-tasks "></i>
+                </a>
+              </li>
+              <li class="dropdown custom-dropdown user user-menu ">
+                <a href="#" class="nav-link" data-toggle="dropdown">
+                  <img src="../../../../assets/img/dummy/u8.png" class="user-image" alt="User Image">
+                  <i class="icon-more_vert "></i>
+                </a>
+                <div class="dropdown-menu p-4 dropdown-menu-right">
+                  <div class="row box justify-content-between my-4">
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-apps purple lighten-2 avatar  r-5"></i>
+                        <div class="pt-1">Apps</div>
+                      </a>
+                    </div>
+                    <div class="col"><a href="#">
+                      <i class="icon-beach_access pink lighten-1 avatar  r-5"></i>
+                      <div class="pt-1">Profile</div>
+                    </a></div>
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-perm_data_setting indigo lighten-2 avatar  r-5"></i>
+                        <div class="pt-1">Settings</div>
+                      </a>
                     </div>
                   </div>
-                </li>
-                <li>
-                  <div class="main-header-notification">
-                    <a href="#" class="header-icon notification-icon" data-toggle="dropdown">
-                      <span class="count" data-bg-img="../../../../assets/img/header/notification/count-bg.png">22</span>
-                      <img src="../../../../assets/img/header/notification/notification-icon.svg" alt="" class="svg">
-                    </a>
-                    <div class="dropdown-menu style--two dropdown-menu-right">
-                      <div class="dropdown-header d-flex align-items-center justify-content-between">
-                        <h5>5 New notifications</h5>
-                        <a href="#" class="text-mute d-inline-block">Clear all</a>
-                      </div>
-                      <div class="dropdown-body">
-                        <a href="#" class="item-single d-flex align-items-center">
-                          <div class="content">
-                            <div class="mb-2">
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus amet.</p>
-                          </div>
-                        </a>
-                        <a href="#" class="item-single d-flex align-items-center">
-                          <div class="content">
-                            <div class="mb-2">
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
-                        </a>
-                        <a href="#" class="item-single d-flex align-items-center">
-                          <div class="content">
-                            <div class="mb-2">
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
-                        </a>
-                        <a href="#" class="item-single d-flex align-items-center">
-                          <div class="content">
-                            <div class="mb-2">
-                              <p class="time">2 min ago</p>
-                            </div>
-                            <p class="main-text">Donec dapibus mauris id odio ornare tempus. Duis sit amet accumsan justo.</p>
-                          </div>
-                        </a>
-                      </div>
+                  <div class="row box justify-content-between my-4">
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-star light-green lighten-1 avatar  r-5"></i>
+                        <div class="pt-1">Favourites</div>
+                      </a>
+                    </div>
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-save2 orange accent-1 avatar  r-5"></i>
+                        <div class="pt-1">Saved</div>
+                      </a>
+                    </div>
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-perm_data_setting grey darken-3 avatar  r-5"></i>
+                        <div class="pt-1">Settings</div>
+                      </a>
                     </div>
                   </div>
-                </li>
-              </ul>
-            </div>
+                  <hr>
+                  <div class="row box justify-content-between my-4">
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-apps purple lighten-2 avatar  r-5"></i>
+                        <div class="pt-1">Apps</div>
+                      </a>
+                    </div>
+                    <div class="col"><a href="#">
+                      <i class="icon-beach_access pink lighten-1 avatar  r-5"></i>
+                      <div class="pt-1">Profile</div>
+                    </a></div>
+                    <div class="col">
+                      <a href="#">
+                        <i class="icon-perm_data_setting indigo lighten-2 avatar  r-5"></i>
+                        <div class="pt-1">Settings</div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

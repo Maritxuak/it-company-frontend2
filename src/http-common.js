@@ -28,13 +28,6 @@ instance.interceptors.response.use(
     },
     error => {
 
-        if (error.response.status === 500) {
-
-            localStorage.setItem('internalError', true);
-
-            window.location.href='/my/error-fatal';
-
-        }
 
         if (error.response && error.response.status === 401) {
             if (window.location.pathname !== '/my/auth/login') {

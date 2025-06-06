@@ -35,17 +35,19 @@
             </div>
             <div class="slimScroll" data-height="600">
               <ul class="list-unstyled">
-                <li v-for="user in filteredUsers" :key="user.id"
+                <li v-for="user in this.users" :key="user.id"
                     class="media p-4 b-b list-group-item-action"
                     @click="startChatWithUser(user.id)"
-                    :class="{ 'active': activeChatWithUserId === user.id }">
-                  <div class="avatar avatar-md mr-3">
-                    <img :src="getUserAvatar(user)" alt="">
+                    :class="{ 'active': activeChatWithUserId === user.id ,
+                              'd-none': this.currentUserId === user.id
+                    }">
+                  <div class="avatar avatar-md mr-3" v-if="this.currentUserId !== user.id">
+                    <img src="@/assets/img/icon/avatar.png" alt="">
                     <span class="avatar-badge has-indicator online">
                       <i class="icon icon-check"></i>
                     </span>
                   </div>
-                  <div class="media-body text-truncate">
+                  <div class="media-body text-truncate" v-if="this.currentUserId !== user.id">
                     <h6>{{ user.firstName }} {{ user.lastName }}</h6>
                     <small>{{ user.email }}</small>
                   </div>
@@ -69,7 +71,9 @@
                         <img :src="getMessageSenderAvatar(message)" alt="" class="img-responsive">
                       </div>
                       <div class="chat-content">
-                        <div class="chat-meta">{{ formatTime(message.createdAt) }}</div>
+                        <div class="chat-meta">
+                          <span class="sender-name">{{ getSenderName(message) }}</span>
+                        </div>
                         {{ message.content }}
                         <div class="clearfix"></div>
                       </div>
@@ -82,7 +86,7 @@
                   <div class="input-group">
                     <input v-model="newMessage" class="form-control" placeholder="Введите сообщение" type="text">
                     <span class="input-group-btn ml-2">
-                      <button type="submit" class="btn btn-primary">Отправить</button>
+                      <button type="submit" class="btn btn-primary" >Отправить</button>
                     </span>
                   </div>
                 </form>
@@ -105,19 +109,20 @@
 import profileDataService from "@/service/ProfileDataService.js";
 import chatService from "@/service/ChatService.js";
 import { socket } from "@/service/socket.js";
-
+import { io } from "socket.io-client";
 export default {
   name: "chat",
   data() {
     return {
       users: [],
-      currentUserId: "your-current-user-id", // Замените на реальный ID текущего пользователя
+      currentUserId: "your-current-user-id",
       searchQuery: "",
-      activeChatWithUserId: null, // ID пользователя, с которым открыт чат
-      activeChat: null, // Данные текущего чата
+      activeChatWithUserId: null,
+      activeChat: null, 
       messages: [],
       newMessage: "",
-      socket: null
+      socket: null,
+      socketUrl: import.meta.env.VITE_APP_WS_URL || "http://localhost:3000",
     }
   },
   computed: {
@@ -140,6 +145,21 @@ export default {
     this.initSocket();
   },
   methods: {
+getSenderName(message) {
+  if (this.isMyMessage(message)) {
+    return "Вы";
+  }
+
+  if (message.sender?.profile) {
+    return `${message.sender.profile.firstName || ''} ${message.sender.profile.lastName || ''}`.trim();
+  }
+  
+  if (message.profile) {
+    return `${message.profile.firstName || ''} ${message.profile.lastName || ''}`.trim();
+  }
+
+  return "Неизвестный";
+},
     getUsers() {
       profileDataService.getProfileAll()
           .then((response) => {
@@ -148,19 +168,24 @@ export default {
           .catch(error => {
             console.error("Ошибка при получении пользователей:", error);
           });
+      profileDataService.getProfile()
+          .then((response) => {
+            this.currentUserId = response.data.id;
+          })
+          .catch(error => {
+            console.error("Ошибка при получении пользователей:", error);
+          });
     },
 
     async startChatWithUser(otherUserId) {
       this.activeChatWithUserId = otherUserId;
-
+        console.log("fdgdf", this.activeChatWithUserId)
       try {
-        // 1. Пытаемся получить существующий чат
         const response = await chatService.getChatWithUser(otherUserId);
         this.activeChat = response.data;
         this.loadMessages();
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // 2. Если чата нет, создаем новый
           await this.createNewChat(otherUserId);
         } else {
           console.error("Ошибка при получении чата:", error);
@@ -176,11 +201,6 @@ export default {
       };
 
       try {
-        // Вариант 1: через REST API
-        // const response = await chatService.createChat(createChatDto);
-        // this.activeChat = response.data;
-
-        // Вариант 2: через WebSocket
         this.socket.emit('createChat', createChatDto, (createdChat) => {
           this.activeChat = createdChat;
           this.loadMessages();
@@ -192,8 +212,8 @@ export default {
 
     loadMessages() {
       if (!this.activeChat) return;
-
-      chatService.getChatMessages(this.activeChat.id)
+      console.log(123, this.activeChat)
+      chatService.getChatMessages(this.activeChat.chat.id)
           .then(response => {
             this.messages = response.data;
           })
@@ -202,43 +222,65 @@ export default {
           });
     },
 
-    sendMessage() {
-      if (!this.newMessage.trim() || !this.activeChat) return;
+sendMessage() {
+  if (!this.activeChat) {
+    console.log('No active chat');
+    return;
+  }
 
-      const createMessageDto = {
-        chatId: this.activeChat.id,
-        userId: this.currentUserId,
-        content: this.newMessage
-      };
+  console.log('Before emit', {
+    connected: this.socket.connected,
+    chatId: this.activeChat.id,
+    message: this.newMessage
+  });
 
-      // Вариант 1: через REST API
-      // chatService.sendMessage(createMessageDto)
-      //   .then(response => {
-      //     this.messages.push(response.data);
-      //     this.newMessage = "";
-      //   });
+  const createMessageDto = {
+    chatId: this.activeChat.id,
+    userId: this.currentUserId,
+    content: this.newMessage,
+  };
 
-      // Вариант 2: через WebSocket
-      this.socket.emit('sendMessage', createMessageDto, (sentMessage) => {
-        this.messages.push(sentMessage);
-        this.newMessage = "";
-      });
-    },
+  this.socket.emit("sendMessage", createMessageDto, (response) => {
+    console.log('Callback executed', response); 
+    if (response?.error) {
+      console.error("Error:", response.error);
+    } else {
+      this.messages.push(response);
+      this.newMessage = "";
+    }
+  });
 
+},
     isMyMessage(message) {
       return message.senderId === this.currentUserId;
     },
 
     initSocket() {
-      this.socket = socket;
+      this.socket = io(this.socketUrl, {
+        autoConnect: true,
+        withCredentials: true,
+        transports: ["websocket", "polling"],
+      });
 
-      this.socket.on('messageSent', (message) => {
+      this.socket.on("connect", () => {
+        console.log("WebSocket connected");
+      });
+
+      this.socket.on("disconnect", () => {
+        console.log("WebSocket disconnected");
+      });
+
+      this.socket.on("connect_error", (err) => {
+        console.error("WebSocket connection error:", err);
+      });
+
+      this.socket.on("messageSent", (message) => {
         if (this.activeChat && message.chatId === this.activeChat.id) {
           this.messages.push(message);
         }
       });
 
-      this.socket.on('chatCreated', (chat) => {
+      this.socket.on("chatCreated", (chat) => {
         if (chat.userIds.includes(this.activeChatWithUserId)) {
           this.activeChat = chat;
           this.loadMessages();
@@ -250,9 +292,9 @@ export default {
       return '../../assets/img/dummy/u4.png';
     },
 
-    getMessageSenderAvatar(message) {
-      return '../../assets/img/dummy/u4.png';
-    },
+getMessageSenderAvatar(message) {
+  return '../../assets/img/dummy/u4.png';
+},
 
     formatTime(timestamp) {
       return new Date(timestamp).toLocaleTimeString();
@@ -263,6 +305,50 @@ export default {
       this.socket.off('messageSent');
       this.socket.off('chatCreated');
     }
-  }
+  },
+    beforeUnmount() {
+    if (this.socket) {
+      this.socket.off("connect");
+      this.socket.off("disconnect");
+      this.socket.off("connect_error");
+      this.socket.off("messageSent");
+      this.socket.off("chatCreated");
+      this.socket.disconnect();
+    }
+  },
 }
 </script>
+
+<style scoped>
+.by-me {
+  text-align: right;
+  background-color: #e3f2fd;
+  margin-left: auto;
+}
+
+.by-other {
+  text-align: left;
+  background-color: #f5f5f5;
+  margin-right: auto;
+}
+
+.sender-name {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.chat-content {
+  padding: 8px 12px;
+  border-radius: 18px;
+  display: inline-block;
+  max-width: 70%;
+}
+
+.by-me .chat-content {
+  background-color: #e3f2fd;
+}
+
+.by-other .chat-content {
+  background-color: #f5f5f5;
+}
+</style>

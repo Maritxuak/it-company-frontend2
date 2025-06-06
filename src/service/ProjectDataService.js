@@ -1,32 +1,53 @@
 import http from "../http-common";
 
 export default {
-    //TODO Получение списка разработчиков.
     getProjectDevelop() {
         return http.get('/projects/developers');
     },
 
-    //TODO Создание проекта.
     postProject(data) {
         return http.post('/projects', data);
     },
 
-    //TODO Получение списка проектов пользователя.
     getProjects() {
         return http.get('/projects/me');
     },
-    //TODO Получение списка проектов.
+
     getProject() {
         return http.get('/projects');
     },
 
-    //TODO Получение списка проектов.
     getTask() {
         return http.get('/projects/me/tasks');
     },
 
-    //TODO Создание таска по проекту.
     createTask(data) {
         return http.post('/projects/tasks', data);
     },
+
+    startTaskTimer(taskId, data) {
+      return http.post(`/projects/tasks/${taskId}/start`, data);
+    },
+
+    pauseTaskTimer(taskId, data) {
+      return http.post(`/projects/tasks/${taskId}/pause`, data);
+    },
+
+    resumeTaskTimer(taskId, data) {
+      return http.post(`/projects/tasks/${taskId}/resume`, data);
+    },
+
+    createJobVacancy( data) {
+      return http.post(`/job-vacancies`, data);
+    },
+    getJobVacancies() {
+      return http.get(`/job-vacancies`);
+    },
+    getHr() {
+      return http.get(`/user/hr-managers`);
+    },
+
+    closeTask(taskId, data) {
+      return http.post(`/projects/tasks/${taskId}/close`, data);
+    }
 }

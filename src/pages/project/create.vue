@@ -25,7 +25,6 @@
     </header>
     <div class="container-fluid animatedParent animateOnce my-3">
       <div class="animated fadeInUpShort">
-        <!-- Блок для отображения ошибок -->
         <div v-if="errorMessage" class="alert alert-danger mb-4">
           {{ errorMessage }}
         </div>
@@ -34,17 +33,34 @@
           <div class="row">
             <div class="col-md-8">
               <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="validationCustom01">Название проекта</label>
-                  <input type="text" class="form-control"
-                         :class="{'is-invalid': errors.name && touched.name}"
-                         placeholder="Название проекта"
-                         v-model="project.name"
-                         @blur="touched.name = true">
-                  <div class="invalid-feedback" v-if="errors.name && touched.name">
-                    {{ errors.name }}
-                  </div>
-                </div>
+<div class="col-md-6 mb-3">
+      <label for="validationCustom01">Название проекта</label>
+      <input type="text" class="form-control"
+             :class="{'is-invalid': errors.name && touched.name}"
+             placeholder="Название проекта"
+             v-model="project.name"
+             @blur="touched.name = true">
+      <div class="invalid-feedback" v-if="errors.name && touched.name">
+        {{ errors.name }}
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <label for="projectCategory">Категория проекта</label>
+      <select class="form-control"
+              :class="{'is-invalid': errors.category && touched.category}"
+              id="projectCategory"
+              v-model="project.category"
+              @blur="touched.category = true">
+        <option value="" disabled selected>Выберите категорию</option>
+        <option value="1">Веб проект</option>
+        <option value="2">ТГ бот</option>
+        <option value="3">Мобильное приложение</option>
+      </select>
+      <div class="invalid-feedback" v-if="errors.category && touched.category">
+        {{ errors.category }}
+      </div>
+    </div>
               </div>
 
               <div class="row">
@@ -143,7 +159,8 @@ export default {
         description: '',
         startDate: '',
         endDate: '',
-        teamMembers: []
+        teamMembers: [],
+        category: ''
       },
       errors: {},
       showSuccess: false,
@@ -152,7 +169,8 @@ export default {
         description: false,
         startDate: false,
         endDate: false,
-        teamMembers: false
+        teamMembers: false,
+        category: false
       },
       errorMessage: '',
       loading: false
@@ -214,17 +232,22 @@ export default {
         this.errors.teamMembers = 'Выберите хотя бы одного разработчика';
         isValid = false;
       }
+      
+      if (!this.project.category) {
+        this.errors.category = 'Выберите категорию проекта';
+        isValid = false;
+      }
 
       return isValid;
     },
-
     validateBeforeSubmit() {
       this.touched = {
         name: true,
         description: true,
         startDate: true,
         endDate: true,
-        teamMembers: true
+        teamMembers: true,
+        category: true 
       };
 
       if (this.validateForm()) {
@@ -241,7 +264,8 @@ export default {
         description: this.project.description.trim(),
         startDate: this.project.startDate,
         endDate: this.project.endDate,
-        teamMembers: this.project.teamMembers
+        teamMembers: this.project.teamMembers,
+        category: parseInt(this.project.category) 
       };
 
       projectDataService.postProject(projectData)
@@ -297,7 +321,7 @@ export default {
 
 .success-notification {
   position: fixed;
-  top: 20px;
+  top: 60px;
   right: 20px;
   background-color: #4CAF50;
   color: white;

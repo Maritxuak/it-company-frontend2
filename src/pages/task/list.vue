@@ -84,10 +84,30 @@
                     <p><strong>Время на выполнение:</strong> {{ selectedProject.estimatedTime }}</p>
                     <p><strong>Описание:</strong></p>
                     <p>{{ selectedProject.description }}</p>
+                    <div style="margin-bottom: 16px;">
+  <strong>Время на задаче:</strong>
+  <span style="font-size: 1.3em; font-family: monospace;">{{ formatTimer(timer) }}</span>
+</div>
+<div style="margin-bottom: 16px;">
+  <button v-if="timerStatus === 'not_started'" class="btn btn-primary" @click="startTimer">
+    Начать работу
+  </button>
+  <button v-if="timerStatus === 'running'" class="btn btn-warning" @click="pauseTimer">
+    Пауза
+  </button>
+  <button v-if="timerStatus === 'paused'" class="btn btn-success" @click="resumeTimer">
+    Продолжить работу
+  </button>
+</div>
                   </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" @click="closeModal">Закрыть</button>
-                </div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" @click="closeTask">
+    Завершить задачу
+  </button>
+  <button type="button" class="btn btn-secondary" @click="closeModal">
+    Закрыть
+  </button>
+</div>
               </div>
             </div>
           </div>
@@ -132,6 +152,7 @@
 <script>
 import projectDataService from "@/service/ProjectDataService.js";
 import profileDataService from "@/service/ProfileDataService.js";
+import ProjectDataService from "@/service/ProjectDataService.js";
 
 export default {
   name: "index",
@@ -140,6 +161,7 @@ export default {
       developers: [],
       tasks: null,
       actualUser: null,
+      
       project: {
         name: '',
         description: '',
@@ -159,6 +181,11 @@ export default {
       showModal: false,
       errorMessage: '',
       loading: false,
+          timer: 0,
+    timerInterval: null,
+    timerStatus: 'not_started',
+    startTimestamp: null, 
+    accumulatedTime: 0,
       projects: [],
       selectedProject: {
         name: '',
@@ -173,6 +200,125 @@ export default {
     this.getProfile();
   },
   methods: {
+saveTimerState() {
+  const key = this.getStorageKey();
+  localStorage.setItem(key, JSON.stringify({
+    timerStatus: this.timerStatus,
+    startTimestamp: this.startTimestamp,
+    accumulatedTime: this.accumulatedTime
+  }));
+},
+loadTimerState() {
+  const key = this.getStorageKey();
+  const saved = localStorage.getItem(key);
+  if (!saved) return false;
+  try {
+    const { timerStatus, startTimestamp, accumulatedTime } = JSON.parse(saved);
+    this.timerStatus = timerStatus;
+    this.startTimestamp = startTimestamp;
+    this.accumulatedTime = accumulatedTime;
+    return true;
+  } catch {
+    return false;
+  }
+},
+  updateTimer() {
+    if (this.timerStatus === 'running' && this.startTimestamp) {
+      const now = Date.now();
+      this.timer = this.accumulatedTime + Math.floor((now - this.startTimestamp) / 1000);
+    } else {
+      this.timer = this.accumulatedTime;
+    }
+  },
+  startTimer() {
+    if (this.timerStatus === 'not_started' || this.timerStatus === 'paused') {
+      this.timerStatus = 'running';
+      this.startTimestamp = Date.now();
+      this.timerInterval = setInterval(() => {
+        this.updateTimer();
+      }, 1000);
+      this.saveTimerState();
+    }
+  },
+  pauseTimer() {
+    if (this.timerStatus === 'running') {
+      this.updateTimer();
+      this.timerStatus = 'paused';
+      this.accumulatedTime = this.timer;
+      this.startTimestamp = null;
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+      this.saveTimerState();
+    }
+  },
+  clearTimerState() {
+  const key = this.getStorageKey();
+  localStorage.removeItem(key);
+},
+  resumeTimer() {
+    if (this.timerStatus === 'paused') {
+      this.startTimer();
+    }
+  },
+  stopTimer() {
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    this.timerStatus = 'finished';
+    this.saveTimerState();
+  },
+openProjectModal(project) {
+  this.selectedProject = project;
+  this.showModal = true;
+
+  if (!this.loadTimerState()) {
+    this.resetTimerState();
+  }
+
+  if (this.timerStatus === 'running') {
+    this.timerInterval = setInterval(() => {
+      this.updateTimer();
+    }, 1000);
+  } else {
+    this.updateTimer();
+  }
+},
+getStorageKey() {
+  return `taskTimer_${this.selectedProject.id}`; 
+},
+async closeTask() {
+  this.stopTimer();
+
+  try {
+    await ProjectDataService.closeTask(this.selectedProject.id);
+
+    this.showModal = false;
+    this.showSuccess = true;
+    localStorage.removeItem(`taskTimer_${this.selectedProject.id}`);
+
+    setTimeout(() => {
+      this.showSuccess = false;
+      location.reload();
+    }, 2000);
+
+  } catch (error) {
+    alert('Ошибка при завершении задачи');
+    console.error(error);
+  }
+},
+closeModal() {
+  this.showModal = false;
+  if (this.timerInterval) {
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
+  }
+  this.saveTimerState(); 
+},
+  formatTimer(seconds) {
+    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
+  },
     getProfile(){
       console.log('BaseURL:', import.meta.env.VITE_APP_BACKEND_API_BASE);
       profileDataService.getProfile()
@@ -189,14 +335,6 @@ export default {
       return description.length > 20
           ? description.substring(0, 20) + '...'
           : description;
-    },
-    openProjectModal(project) {
-      console.log(123)
-      this.selectedProject = project;
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
     },
     formatDate(dateString) {
       if (!dateString) return '';
@@ -316,7 +454,7 @@ export default {
 
 .success-notification {
   position: fixed;
-  top: 20px;
+  top: 60px;
   right: 20px;
   background-color: #4CAF50;
   color: white;

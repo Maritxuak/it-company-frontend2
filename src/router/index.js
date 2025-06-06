@@ -11,6 +11,8 @@ import createNotification from "@/pages/notifications/create.vue"
 import taskList from "@/pages/task/list.vue"
 import createTask from "@/pages/task/create.vue"
 import chat from "@/pages/chat/index.vue"
+import createVacancy from "@/pages/vacancy/create.vue"
+import listVacancy from "@/pages/vacancy/list.vue"
 const routes = [
   {
     path: '/',
@@ -75,7 +77,7 @@ const routes = [
         ]
       },
       {
-        path: '/notification',
+        path: '/notitifcation',
         children: [
           {
             path: 'list',
@@ -86,11 +88,32 @@ const routes = [
             },
           },
           {
-            path: 'create',
-            name: 'createNotification',
+            path: 'add',
+            name: 'addNotification',
             component: createNotification,
             meta: {
               title: "Создание уведомлений",
+            },
+          },
+        ]
+      },
+            {
+        path: '/vacancy',
+        children: [
+          {
+            path: 'list',
+            name: 'VacancyList',
+            component: listVacancy,
+            meta: {
+              title: "Список вакансий",
+            },
+          },
+          {
+            path: 'add',
+            name: 'addVacancy',
+            component: createVacancy,
+            meta: {
+              title: "Создание вакансий",
             },
           },
         ]

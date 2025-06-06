@@ -304,7 +304,6 @@ export default {
 
             setTimeout(() => {
               this.showSuccess = false;
-              // Можно добавить перенаправление или обновление списка
             }, 3000);
           })
           .catch(error => {
@@ -363,7 +362,7 @@ export default {
 
 .success-notification {
   position: fixed;
-  top: 20px;
+  top: 60px;
   right: 20px;
   background-color: #4CAF50;
   color: white;

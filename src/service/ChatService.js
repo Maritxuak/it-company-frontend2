@@ -6,7 +6,7 @@ export default {
     },
 
     getChatMessages(chatId) {
-        return http.get(`/chats/${chatId}/messages`);
+        return http.get(`/chats/messages/${chatId}`);
     },
 
     createChat(createChatDto) {

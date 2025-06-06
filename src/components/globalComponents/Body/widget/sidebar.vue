@@ -24,32 +24,23 @@
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Профиль</span>
         </a>
         </li>
-        <li class="treeview" @click="router().push('/profile/edit')"><a href="#">
-          <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Редактировать профиль</span>
-        </a>
-        </li>
-        <li class="header"><strong>Меню</strong></li>
 
-        <li class="treeview"><a href="#"><i class="icon icon-account_box light-green-text s-18"></i>Статистика</a>
-        </li>
+        <!-- <li class="treeview"><a href="#"><i class="icon icon-account_box light-green-text s-18"></i>Статистика</a>
+        </li> -->
         <li class="treeview no-b" @click="router().push('/chat')">
           <a href="#">
             <i class="icon icon-package light-green-text s-18"></i>
             <span>Чаты</span>
-            <span class="badge r-3 badge-success pull-right">20</span>
           </a>
         </li>
-        <li class="header"><strong>Проекты и Задачи</strong></li>
         <li class="treeview" @click="router().push('/project/list')"><a href="#">
           <i class="icon icon icon-package blue-text s-18"></i>
           <span>Проекты</span>
-          <span class="badge r-3 badge-primary pull-right">4</span>
         </a>
         </li>
         <li v-if="role === 'admin'" class="treeview" @click="router().push('/project/create')"><a href="#">
           <i class="icon icon icon-package blue-text s-18"></i>
           <span>Создать проект</span>
-          <span class="badge r-3 badge-primary pull-right">4</span>
         </a>
         </li>
         <li class="treeview" @click="router().push('/task/list')"><a href="#">
@@ -60,21 +51,15 @@
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Создать задачи</span>
         </a>
         </li>
-        <li class="header"><strong>Вакансии</strong></li>
         <li class="treeview" @click="router().push('/vacancy/list')"><a href="#">
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Вакансии</span>
         </a>
         </li>
-        <li class="treeview" @click="router().push('/vacancy/add')"><a href="#">
+        <li class="treeview" @click="router().push('/vacancy/add')" v-if="role === 'admin'"><a href="#">
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Создание вакансии</span>
         </a>
         </li>
-        <li class="treeview" @click="router().push('/vacancy/edit')"><a href="#">
-          <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Редактировании вакансий</span>
-        </a>
-        </li>
-        <li class="header"><strong>Уведомления</strong></li>
-        <li class="treeview" @click="router().push('/notitifcation/add')"><a href="#">
+        <li class="treeview" @click="router().push('/notitifcation/add')" v-if="role === 'admin'"><a href="#">
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Создание уведомлений</span>
         </a>
         </li>

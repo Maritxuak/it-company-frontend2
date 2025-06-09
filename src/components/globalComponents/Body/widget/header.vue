@@ -54,6 +54,7 @@
 
 <script>
 import NotificationDataService from '@/service/NotificationDataService';
+import ProfileDataService from '@/service/ProfileDataService';
 import io from 'socket.io-client';
 
 export default {
@@ -74,6 +75,7 @@ export default {
       notifications: [],
       socket: null,
       unreadCount: 0,
+      socketUrl: 'http://localhost:3000', 
     }
   },
   created() {
@@ -93,22 +95,62 @@ export default {
         })
     },
     initWebSocket() {
-            this.socket = io(this.socketUrl, {
-        autoConnect: true,
-        withCredentials: true,
-        transports: ["websocket", "polling"],
-      });
-      
-      this.socket.on('notification', (notification) => {
-        this.notifications.unshift(notification);
-        if (!notification.isRead) {
-          this.unreadCount++;
-        }
-        
-        if (this.showNotifications) {
-          this.$toast.info(notification.message);
-        }
-      });
+      try {
+        // Import the socket instance from the service
+        import('@/service/socket').then(module => {
+          const { socket } = module;
+
+          socket.on('connect', () => {
+            console.log('WebSocket connected');
+          });
+
+          socket.on('disconnect', (reason) => {
+            console.log('WebSocket disconnected:', reason);
+          });
+
+          socket.on('notification', (notification) => {
+            console.log('Received notification:', notification);
+
+            ProfileDataService.getProfile()
+              .then(response => {
+                const currentUser = response.data;
+
+                if (notification.isPublic || notification.recipients.some(recipient =>
+                  recipient.id === currentUser.id
+                )) {
+                  console.log('Notification is for current user or is public, adding to list', notification);
+                  this.notifications.unshift(notification);
+                  if (!notification.isRead) {
+                    this.unreadCount++;
+                  }
+
+                  if (this.showNotifications) {
+                    this.$toast.info(notification.message);
+                  }
+                } else {
+                  console.log('Notification is not for current user and not public, ignoring');
+                }
+              })
+              .catch(error => {
+                console.error('Error getting current user:', error);
+              });
+          });
+
+          socket.on('connect_error', (error) => {
+            console.error('WebSocket connection error:', error);
+          });
+
+          socket.on('error', (error) => {
+            console.error('WebSocket error:', error);
+          });
+
+          this.socket = socket;
+        }).catch(error => {
+          console.error('Error importing socket module:', error);
+        });
+      } catch (error) {
+        console.error('Error initializing WebSocket:', error);
+      }
     },
     
 
@@ -121,11 +163,13 @@ export default {
     },
     
     async markAllAsRead() {
-      NotificationDataService.readNotification()
-      .then((response) => {
-        notification.isRead = true;
-        this.unreadCount--;
-      })
+      await NotificationDataService.readNotification()
+        .then((response) => {
+          this.notifications.forEach(notification => {
+            notification.isRead = true;
+          });
+          this.unreadCount = 0;
+        });
     },
     
     
@@ -145,6 +189,7 @@ export default {
         notification.isRead = true;
         this.unreadCount--;
       }
+      this.$forceUpdate();
     },
     formatDate(dateString) {
       return new Date(dateString).toLocaleString();

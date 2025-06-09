@@ -44,7 +44,7 @@
         {{ errors.name }}
       </div>
     </div>
-    
+
     <div class="col-md-6 mb-3">
       <label for="projectCategory">Категория проекта</label>
       <select class="form-control"
@@ -218,13 +218,19 @@ export default {
       if (!this.project.startDate) {
         this.errors.startDate = 'Укажите дату начала';
         isValid = false;
+      } else if (new Date(this.project.startDate) < new Date()) {
+        this.errors.startDate = 'Дата начала не может быть в прошлом';
+        isValid = false;
       }
 
       if (!this.project.endDate) {
         this.errors.endDate = 'Укажите дату окончания';
         isValid = false;
-      } else if (this.project.startDate && new Date(this.project.endDate) < new Date(this.project.startDate)) {
-        this.errors.endDate = 'Дата окончания не может быть раньше даты начала';
+      } else if (new Date(this.project.endDate) < new Date()) {
+        this.errors.endDate = 'Дата окончания не может быть в прошлом';
+        isValid = false;
+      } else if (this.project.startDate && new Date(this.project.endDate) <= new Date(this.project.startDate)) {
+        this.errors.endDate = 'Дата окончания не может быть раньше или в день начала';
         isValid = false;
       }
 
@@ -232,7 +238,7 @@ export default {
         this.errors.teamMembers = 'Выберите хотя бы одного разработчика';
         isValid = false;
       }
-      
+
       if (!this.project.category) {
         this.errors.category = 'Выберите категорию проекта';
         isValid = false;
@@ -247,7 +253,7 @@ export default {
         startDate: true,
         endDate: true,
         teamMembers: true,
-        category: true 
+        category: true
       };
 
       if (this.validateForm()) {
@@ -265,7 +271,7 @@ export default {
         startDate: this.project.startDate,
         endDate: this.project.endDate,
         teamMembers: this.project.teamMembers,
-        category: parseInt(this.project.category) 
+        category: parseInt(this.project.category)
       };
 
       projectDataService.postProject(projectData)
@@ -286,8 +292,6 @@ export default {
             this.loading = false;
           });
     },
-
-
 
     resetForm() {
       this.project = {
@@ -344,7 +348,7 @@ export default {
   top: .25rem !important;
 }
 
-.alert-danger {
+.Alert-danger {
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;

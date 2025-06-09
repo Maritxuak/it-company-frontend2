@@ -25,7 +25,6 @@
     </header>
     <div class="container-fluid animatedParent animateOnce my-3">
       <div class="animated fadeInUpShort">
-        <!-- Блок для отображения ошибок -->
         <div v-if="errorMessage" class="alert alert-danger mb-4">
           {{ errorMessage }}
         </div>
@@ -119,48 +118,53 @@
                   </div>
                   <div v-for="project in projects" :key="project.id"
                        class="custom-control custom-radio mb-3 d-flex align-items-center">
-                    <input
-                        type="radio"
-                        class="custom-control-input"
-                        :id="'project-' + project.id"
-                        :value="project.id"
-                        v-model="task.projectId"
-                        @change="touched.projectId = true"
-                    >
-                    <label class="custom-control-label ml-2" :for="'project-' + project.id">
-                      {{ project.name }}
-                    </label>
-                  </div>
-                  <div v-if="errors.projectId && touched.projectId" class="text-danger small mt-2">
-                    {{ errors.projectId }}
-                  </div>
-                </div>
-                <div class="card-footer bg-transparent">
-                  <button class="btn btn-primary" type="submit" :disabled="loading">
-                    <span v-if="!loading">Создать задачу</span>
-                    <span v-else>Создание...</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-    <transition name="slide-fade">
-      <div v-if="showSuccess" class="success-notification">
-        Задача успешно создана!
-      </div>
-    </transition>
+<input
+    type="radio"
+    class="custom-control-input"
+    :id="'project-' + project.id"
+    :value="project.id"
+    v-model="task.projectId"
+    @change="handleProjectSelection(project)"
+>
+    <label class="custom-control-label ml-2" :for="'project-' + project.id">
+      {{ project.name }}
+    </label>
   </div>
+  <div v-if="errors.projectId && touched.projectId" class="text-danger small mt-2">
+    {{ errors.projectId }}
+  </div>
+</div>
+<div class="card-footer bg-transparent">
+  <button class="btn btn-primary" type="submit" :disabled="loading">
+    <span v-if="!loading">Создать задачу</span>
+    <span v-else>Создание...</span>
+  </button>
+</div>
+</div>
+</div>
+</div>
+</form>
+</div>
+</div>
+<transition name="slide-fade">
+  <div v-if="showSuccess" class="success-notification">
+    Задача успешно создана!
+  </div>
+</transition>
+<ProjectModal v-if="selectedProject" :project="selectedProject" @close="selectedProject = null" />
+</div>
 </template>
 
 <script>
 import projectDataService from "@/service/ProjectDataService.js";
 import router from "@/router/index.js";
+import ProjectModal from "@/components/ProjectModal.vue";
 
 export default {
   name: "index",
+  components: {
+    ProjectModal
+  },
   data() {
     return {
       developers: [],
@@ -184,7 +188,9 @@ export default {
         estimatedTime: false
       },
       errorMessage: '',
-      loading: false
+      loading: false,
+      projectDeadlines: {}, // Store project deadlines
+      selectedProject: null // Store selected project for modal
     }
   },
   mounted() {
@@ -215,10 +221,29 @@ export default {
       projectDataService.getProject()
           .then((response) => {
             this.projects = response.data;
+            // Store project deadlines
+            this.projects.forEach(project => {
+              this.projectDeadlines[project.id] = project.endDate;
+            });
           })
           .catch(error => {
             console.error("Ошибка при получении списка проектов:", error);
             this.errorMessage = "Не удалось загрузить список проектов";
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
+
+    getProjectDetails(projectId) {
+      this.loading = true;
+      projectDataService.getProjectById(projectId)
+          .then((response) => {
+            this.selectedProject = response.data;
+          })
+          .catch(error => {
+            console.error("Ошибка при получении информации о проекте:", error);
+            this.errorMessage = "Не удалось загрузить информацию о проекте";
           })
           .finally(() => {
             this.loading = false;
@@ -248,6 +273,12 @@ export default {
       } else if (new Date(this.task.dueDate) < new Date()) {
         this.errors.dueDate = 'Дата выполнения не может быть в прошлом';
         isValid = false;
+      } else if (this.task.projectId && this.projectDeadlines[this.task.projectId]) {
+        const projectDeadline = new Date(this.projectDeadlines[this.task.projectId]);
+        if (new Date(this.task.dueDate) > projectDeadline) {
+          this.errors.dueDate = 'Дата выполнения задачи не может быть позже дедлайна проекта';
+          isValid = false;
+        }
       }
 
       if (!this.task.developerId) {
@@ -299,6 +330,7 @@ export default {
       projectDataService.createTask(taskData)
           .then(response => {
             console.log("Задача создана:", response);
+
             this.showSuccess = true;
             this.resetForm();
 
@@ -340,6 +372,17 @@ export default {
         return error.response.data.message;
       }
       return defaultMessage;
+    },
+
+    handleProjectSelection(project) {
+      this.touched.projectId = true;
+      if (this.selectedProject && this.selectedProject.id === project.id) {
+        // If the same project is selected again, close the modal
+        this.selectedProject = null;
+      } else {
+        // Otherwise, open the modal with project details
+        this.getProjectDetails(project.id);
+      }
     }
   }
 }

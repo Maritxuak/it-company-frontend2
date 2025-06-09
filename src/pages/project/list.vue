@@ -40,11 +40,11 @@
                         </figure>
                       </div>
                     </div>
-                    <div class="card-body" @click="openProjectModal(project)" style="z-index: 1">
-                      <h6 class="mb-1">{{ project.name }}</h6>
-                      <span>{{ truncateDescription(project.description) }}</span><br/>
-                      <a href="#" >Подробнее</a>
-                    </div>
+<div class="card-body" @click="openProjectModal(project)" style="z-index: 1">
+      <h6 class="mb-1">{{ project.name }}</h6>
+      <span>{{ truncateDescription(project.description) }}</span><br/>
+      <a href="#" @click.stop="openProjectModal(project)">Подробнее</a>
+    </div>
                     <div class="p-2 b-t">
                       <div class="row">
                         <div class="col-md-6">
@@ -96,31 +96,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <aside class="white h-100 shadow">
-              <div class="p-3">
-                <ul class="timeline">
-                  <li class="time-label">
-                  <span class="badge badge-danger r-3">
-                    10 мая. 2025
-                  </span>
-                  </li>
-                  <li>
-                    <i class="ion icon-envelope bg-primary"></i>
-                    <div class="timeline-item card">
-                      <div class="card-header white"><a href="#">Поддержка</a> письмо на почту <span
-                          class="time float-right"><i class="ion icon-clock-o"></i> 12:05</span></div>
-                      <div class="card-body">
-                        У меня не работает кнопка! При нажатии появляется 404 ошибка и после сайт вообще перестает работать!Разбертесь!
-                      </div>
-                      <div class="card-footer">
-                        <a class="btn btn-primary btn-xs">Взять в работу</a>
-                        <a class="btn btn-danger btn-xs">Удалить</a>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </aside>
+
           </div>
         </div>
       </div>
@@ -211,7 +187,8 @@ export default {
 
       const deadline = new Date(dateString);
       const now = new Date();
-      const diffDays = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+      const diffTime = deadline - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays < 0) {
         return `${Math.abs(diffDays)} дней назад`;

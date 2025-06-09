@@ -111,33 +111,6 @@
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <aside class="white h-100 shadow">
-              <div class="p-3">
-                <ul class="timeline">
-                  <li class="time-label">
-                  <span class="badge badge-danger r-3">
-                    10 мая. 2025
-                  </span>
-                  </li>
-                  <li>
-                    <i class="ion icon-envelope bg-primary"></i>
-                    <div class="timeline-item card">
-                      <div class="card-header white"><a href="#">Поддержка</a> письмо на почту <span
-                          class="time float-right"><i class="ion icon-clock-o"></i> 12:05</span></div>
-                      <div class="card-body">
-                        У меня не работает кнопка! При нажатии появляется 404 ошибка и после сайт вообще перестает работать!Разбертесь!
-                      </div>
-                      <div class="card-footer">
-                        <a class="btn btn-primary btn-xs">Взять в работу</a>
-                        <a class="btn btn-danger btn-xs">Удалить</a>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </aside>
-          </div>
         </div>
       </div>
     </div>

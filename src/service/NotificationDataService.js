@@ -8,6 +8,6 @@ export default {
         return http.post(`/notifications/mark-all-read`);
     },
     getNotification() {
-        return http.get(`/notifications`);
+        return http.get(`/notifications/me`);
     },
 }

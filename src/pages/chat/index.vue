@@ -23,16 +23,15 @@
     <div class="container-fluid">
       <div class="card my-3 shadow b-0">
         <div class="row no-gutters">
-          <!-- Список пользователей -->
           <div class="col-md-3 d-none d-md-block text-truncate white b-r">
-            <div class="card-header white">
+            <!-- <div class="card-header white">
               <form>
                 <div class="form-group has-right-icon m-0">
                   <input v-model="searchQuery" class="form-control light r-30" placeholder="Поиск" type="text">
                   <i class="icon-search"></i>
                 </div>
               </form>
-            </div>
+            </div> -->
             <div class="slimScroll" data-height="600">
               <ul class="list-unstyled">
                 <li v-for="user in this.users" :key="user.id"
@@ -56,7 +55,6 @@
             </div>
           </div>
 
-          <!-- Область чата -->
           <div class="col-md-9 col-sm-12 white">
             <div v-if="activeChat">
               <div class="card-header white">

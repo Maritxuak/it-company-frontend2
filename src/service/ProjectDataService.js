@@ -14,7 +14,15 @@ export default {
     },
 
     getProject() {
-        return http.get('/projects');
+        return http.get('/projects', {
+            params: {
+                select: ['id', 'name', 'endDate']
+            }
+        });
+    },
+
+    getProjectById(id) {
+        return http.get(`/projects/${id}`);
     },
 
     getTask() {
@@ -37,11 +45,20 @@ export default {
       return http.post(`/projects/tasks/${taskId}/resume`, data);
     },
 
-    createJobVacancy( data) {
+    createJobVacancy(data) {
       return http.post(`/job-vacancies`, data);
     },
     getJobVacancies() {
       return http.get(`/job-vacancies`);
+    },
+    getVacancy(id) {
+      return http.get(`/job-vacancies/${id}`);
+    },
+    addCandidate(vacancyId, candidateData) {
+      return http.post(`/job-vacancies/${vacancyId}/candidates`, candidateData);
+    },
+    updateCandidate(candidateId, candidateData) {
+      return http.patch(`/job-vacancies/candidates/${candidateId}`, candidateData);
     },
     getHr() {
       return http.get(`/user/hr-managers`);
@@ -49,5 +66,9 @@ export default {
 
     closeTask(taskId, data) {
       return http.post(`/projects/tasks/${taskId}/close`, data);
+    },
+
+    sendNotification(data) {
+        return http.post('/notifications', data);
     }
 }

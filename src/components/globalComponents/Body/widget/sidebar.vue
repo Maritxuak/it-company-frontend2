@@ -59,10 +59,10 @@
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Создание вакансии</span>
         </a>
         </li>
-        <li class="treeview" @click="router().push('/notitifcation/add')" v-if="role === 'admin'"><a href="#">
+        <!-- <li class="treeview" @click="router().push('/notitifcation/add')" v-if="role === 'admin'"><a href="#">
           <i class="icon icon-sailing-boat-water purple-text s-18"></i> <span>Создание уведомлений</span>
         </a>
-        </li>
+        </li> -->
       </ul>
     </section>
   </aside>
